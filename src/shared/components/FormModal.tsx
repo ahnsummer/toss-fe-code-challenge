@@ -116,7 +116,11 @@ export function FormModal({ title, forms, onSubmit, onClose }: FormModalProps) {
   }, [handleSubmit]);
 
   return (
-    <Modal onClose={onClose} title={title}>
+    <Modal
+      onClose={onClose}
+      title={title}
+      description="이메일과 FE 경력 연차 등 간단한 정보를 입력해주세요."
+    >
       {forms.map(({ key, validate, ...item }) => (
         <div key={key} className="flex flex-col gap-1">
           <label htmlFor={key} className="text-base font-semibold">

@@ -1,14 +1,24 @@
-import { useEffect, useRef, type ReactNode } from "react";
+import { useEffect, useRef, useId, type ReactNode } from "react";
 import { useScrollLock } from "../hooks/useScrollLock";
+
 type ModalProps = {
   onClose: () => void;
   title: ReactNode;
   children: ReactNode;
   footer?: ReactNode;
+  description?: string;
 };
 
-export const Modal = ({ onClose, title, children, footer }: ModalProps) => {
+export const Modal = ({
+  onClose,
+  title,
+  children,
+  footer,
+  description,
+}: ModalProps) => {
   const initialRef = useRef<boolean>(true);
+  const titleId = useId();
+  const descriptionId = useId();
 
   useScrollLock();
 
@@ -34,7 +44,7 @@ export const Modal = ({ onClose, title, children, footer }: ModalProps) => {
 
   return (
     <div
-      className="flex justify-center items-center w-full h-full p-4 fixed inset-0 bg-black/50"
+      className="modal-overlay"
       onClickCapture={(e) => {
         if (e.target !== e.currentTarget) {
           return;
@@ -43,8 +53,15 @@ export const Modal = ({ onClose, title, children, footer }: ModalProps) => {
         onClose();
       }}
     >
-      <div className="w-full p-4 max-w-md max-h-md bg-white rounded-lg flex flex-col gap-4">
+      <div
+        className="modal-content"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        aria-describedby={description ? descriptionId : undefined}
+      >
         <h1
+          id={titleId}
           ref={(el) => {
             if (!initialRef.current) {
               return;
@@ -53,13 +70,18 @@ export const Modal = ({ onClose, title, children, footer }: ModalProps) => {
             initialRef.current = false;
             el?.focus();
           }}
-          tabIndex={1}
-          className="text-xl font-bold"
+          tabIndex={-1}
+          className="modal-title"
         >
           {title}
         </h1>
-        {children}
-        {footer}
+        {description && (
+          <p id={descriptionId} className="modal-description">
+            {description}
+          </p>
+        )}
+        <div className="modal-body">{children}</div>
+        {footer && <div className="modal-footer">{footer}</div>}
       </div>
     </div>
   );

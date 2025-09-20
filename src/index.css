@@ -1,1 +1,62 @@
 @import "tailwindcss";
+
+/* Modal 애니메이션 스타일 */
+.modal-overlay {
+  @apply flex justify-center items-center w-full h-full p-4 fixed inset-0 bg-black/50;
+  animation: modal-fade-in 0.2s ease-out;
+}
+
+.modal-content {
+  @apply w-full p-4 bg-white rounded-lg flex flex-col gap-4;
+  animation: modal-slide-in 0.2s ease-out;
+  transform-origin: center;
+}
+
+.modal-title {
+  @apply text-xl font-bold;
+}
+
+.modal-description {
+  @apply text-gray-600 text-sm;
+}
+
+.modal-body {
+  @apply flex-1;
+}
+
+.modal-footer {
+  @apply flex justify-end gap-2 pt-4 border-t border-gray-200;
+}
+
+/* 애니메이션 키프레임 */
+@keyframes modal-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modal-slide-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* prefers-reduced-motion 설정 고려 */
+@media (prefers-reduced-motion: reduce) {
+  .modal-overlay,
+  .modal-content {
+    animation: none;
+  }
+  
+  .modal-content {
+    transform: none;
+  }
+}
