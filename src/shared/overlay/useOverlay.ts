@@ -1,10 +1,4 @@
-import {
-  useCallback,
-  useContext,
-  useRef,
-  useState,
-  type ReactElement,
-} from "react";
+import { useCallback, useContext, useRef, type ReactElement } from "react";
 import { OverlayContext } from "./OverlayContext";
 import { nanoid } from "nanoid";
 

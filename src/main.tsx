@@ -1,7 +1,7 @@
 import "modern-normalize";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import ModalFormPage from "./pages/ModalFormPage";
+import ModalFormPage from "./pages/ModalFormPage/ModalFormPage";
 import "./index.css";
 import { OverlayProvider } from "./shared/overlay/OverlayContext";
 

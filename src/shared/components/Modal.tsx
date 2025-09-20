@@ -1,4 +1,5 @@
 import { useEffect, useRef, type ReactNode } from "react";
+import { useScrollLock } from "../hooks/useScrollLock";
 type ModalProps = {
   onClose: () => void;
   title: ReactNode;
@@ -8,6 +9,8 @@ type ModalProps = {
 
 export const Modal = ({ onClose, title, children, footer }: ModalProps) => {
   const initialRef = useRef<boolean>(true);
+
+  useScrollLock();
 
   useEffect(() => {
     const controller = new AbortController();
