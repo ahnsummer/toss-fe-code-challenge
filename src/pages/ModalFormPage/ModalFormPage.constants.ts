@@ -31,5 +31,6 @@ export const MODAL_FORM: FormItem[] = [
     key: "github",
     label: "GitHub 링크 (선택)",
     inputType: "text",
+    placeholder: "https://github.com/username",
   },
 ];
