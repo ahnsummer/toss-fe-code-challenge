@@ -6,7 +6,7 @@ const ModalFormPage = () => {
   const overlay = useOverlay();
 
   return (
-    <div>
+    <div className="flex items-center justify-center h-screen">
       <button
         onClick={async (e) => {
           await overlay.open(({ close }) => (
@@ -16,13 +16,13 @@ const ModalFormPage = () => {
                 close();
               }}
               onClose={close}
-              title="제목임"
+              title="신청 폼"
               forms={[
-                { key: "name", label: "이름", type: "text" },
+                { key: "name", label: "이름 / 닉네임", inputType: "text" },
                 {
                   key: "email",
                   label: "이메일",
-                  type: "email",
+                  inputType: "email",
                   validate: (value) => {
                     if (value.length < 4) {
                       return {
@@ -34,7 +34,21 @@ const ModalFormPage = () => {
                     return { isValid: true };
                   },
                 },
-                { key: "password", label: "비밀번호", type: "password" },
+                {
+                  key: "experienceYears",
+                  label: "FE 경력 연차",
+                  type: "select",
+                  options: [
+                    { label: "0-3년", value: "0-3" },
+                    { label: "3-7년", value: "3-7" },
+                    { label: "8년 이상", value: "8+" },
+                  ],
+                },
+                {
+                  key: "github",
+                  label: "GitHub 링크 (선택)",
+                  inputType: "text",
+                },
               ]}
             />
           ));
@@ -42,9 +56,9 @@ const ModalFormPage = () => {
           (e.target as HTMLElement).focus();
         }}
         tabIndex={1}
-        className="focus:bg-black"
+        className="bg-blue-500 text-white p-2 rounded-md"
       >
-        Open Modal
+        신청 폼 작성하기
       </button>
     </div>
   );

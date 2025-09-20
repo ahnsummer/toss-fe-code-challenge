@@ -1,23 +1,40 @@
 import {
-  Fragment,
   useCallback,
   useEffect,
   useState,
-  type ComponentPropsWithRef,
+  type ComponentPropsWithoutRef,
 } from "react";
 import { Modal } from "./Modal";
 
+type FormBase = {
+  key: string;
+  label: string;
+  validate?: (
+    value: string
+  ) => { isValid: true } | { isValid: false; errorMessage: string };
+};
+
+type InputForm = Omit<
+  ComponentPropsWithoutRef<"input">,
+  "type" | "value" | "onChange"
+> & {
+  type?: "input";
+  inputType: ComponentPropsWithoutRef<"input">["type"];
+} & FormBase;
+type SelectForm = Omit<
+  ComponentPropsWithoutRef<"select">,
+  "type" | "value" | "onChange"
+> & {
+  type: "select";
+  inputType?: undefined;
+  options: Array<{ label: string; value: string }>;
+} & FormBase;
+
+type Form = InputForm | SelectForm;
+
 type FormModalProps = {
   title: string;
-  forms: Array<
-    Omit<ComponentPropsWithRef<"input">, "value" | "onChange"> & {
-      key: string;
-      label: string;
-      validate?: (
-        value: string
-      ) => { isValid: true } | { isValid: false; errorMessage: string };
-    }
-  >;
+  forms: Array<Form>;
   onClose: () => void;
   onSubmit: (formValues: Record<string, string>) => void;
 };
@@ -82,50 +99,102 @@ export function FormModal({ title, forms, onSubmit, onClose }: FormModalProps) {
 
   return (
     <Modal onClose={onClose} title={title}>
-      {forms.map(({ className, ...form }) => (
-        <Fragment key={form.key}>
-          <label htmlFor={form.key}>{form.label}</label>
-          <input
-            {...form}
-            id={form.key}
-            value={formValues[form.key] ?? ""}
-            className={[className, errors[form.key] ? "border-red-500" : null]
-              .filter((token) => token !== null)
-              .join(" ")}
-            onChange={(e) => {
-              const validateResult = form.validate?.(e.target.value) ?? {
-                isValid: true,
-              };
+      {forms.map(({ key, label, validate, className, inputType, ...form }) => (
+        <div key={key} className="flex flex-col gap-1">
+          <label htmlFor={key} className="text-base font-semibold">
+            {label}
+          </label>
 
-              if (!validateResult.isValid) {
-                setErrors((prev) => ({
+          {form.type === "select" ? (
+            <select
+              {...form}
+              id={key}
+              value={formValues[key] ?? ""}
+              className={[
+                className,
+                "p-2 border border-gray-300 rounded-md",
+                errors[key] ? "border-red-500" : null,
+              ]
+                .filter((token) => token !== null)
+                .join(" ")}
+              onChange={(e) => {
+                const validateResult = validate?.(e.target.value) ?? {
+                  isValid: true,
+                };
+
+                if (!validateResult.isValid) {
+                  setErrors((prev) => ({
+                    ...prev,
+                    [key]: validateResult.errorMessage,
+                  }));
+                } else {
+                  setErrors((prev) => {
+                    const { [key]: _, ...rest } = prev;
+                    return rest;
+                  });
+                }
+
+                setFormValues((prev) => ({
                   ...prev,
-                  [form.key]: validateResult.errorMessage,
+                  [key]: e.target.value,
                 }));
-              } else {
-                setErrors((prev) => {
-                  const { [form.key]: _, ...rest } = prev;
-                  return rest;
-                });
-              }
+              }}
+            >
+              {form.options.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          ) : (
+            <input
+              {...form}
+              id={key}
+              type={inputType}
+              value={formValues[key] ?? ""}
+              className={[
+                className,
+                "p-2 border border-gray-300 rounded-md",
+                errors[key] ? "border-red-500" : null,
+              ]
+                .filter((token) => token !== null)
+                .join(" ")}
+              onChange={(e) => {
+                const validateResult = validate?.(e.target.value) ?? {
+                  isValid: true,
+                };
 
-              setFormValues((prev) => ({
-                ...prev,
-                [form.key]: e.target.value,
-              }));
-            }}
-          />
-          {errors[form.key] && (
+                if (!validateResult.isValid) {
+                  setErrors((prev) => ({
+                    ...prev,
+                    [key]: validateResult.errorMessage,
+                  }));
+                } else {
+                  setErrors((prev) => {
+                    const { [key]: _, ...rest } = prev;
+                    return rest;
+                  });
+                }
+
+                setFormValues((prev) => ({
+                  ...prev,
+                  [key]: e.target.value,
+                }));
+              }}
+            />
+          )}
+          {errors[key] && (
             <p className="text-red-500" tabIndex={0}>
-              {errors[form.key]}
+              {errors[key]}
             </p>
           )}
-        </Fragment>
+        </div>
       ))}
       <button
         onClick={() => {
           handleSubmit();
         }}
+        className="bg-blue-500 text-white p-2 rounded-md"
       >
         제출
       </button>

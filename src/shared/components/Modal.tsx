@@ -31,7 +31,7 @@ export const Modal = ({ onClose, title, children, footer }: ModalProps) => {
 
   return (
     <div
-      className="w-full h-full fixed inset-0 bg-black/50"
+      className="flex justify-center items-center w-full h-full p-4 fixed inset-0 bg-black/50"
       onClickCapture={(e) => {
         if (e.target !== e.currentTarget) {
           return;
@@ -40,7 +40,7 @@ export const Modal = ({ onClose, title, children, footer }: ModalProps) => {
         onClose();
       }}
     >
-      <div className="w-full h-full p-4 max-w-md max-h-md bg-white rounded-lg">
+      <div className="w-full p-4 max-w-md max-h-md bg-white rounded-lg flex flex-col gap-4">
         <h1
           ref={(el) => {
             if (!initialRef.current) {
@@ -48,11 +48,10 @@ export const Modal = ({ onClose, title, children, footer }: ModalProps) => {
             }
 
             initialRef.current = false;
-
             el?.focus();
           }}
           tabIndex={1}
-          className="focus:bg-black"
+          className="text-xl font-bold"
         >
           {title}
         </h1>
